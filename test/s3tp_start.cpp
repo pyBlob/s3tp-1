@@ -47,7 +47,7 @@ int main(int argc, char ** argv) {
         config.descriptor.spi = device_path;
         config.descriptor.interrupt = PinMapper::find(interrupt_pinid);
 
-        config.control = new SimpleTransceiverControl(unix_control_path);
+        config.control = new Transceiver::SimpleControl(unix_control_path);
     } else if (strcmp(transceiverType, "fire") == 0) {
         if (argc != 4)
         {

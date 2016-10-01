@@ -11,7 +11,7 @@
 #include "ClientInterface.h"
 #include "StatusInterface.h"
 #include "Client.h"
-#include "../control/SimpleTransceiverControl.h"
+#include <trctrl/SimpleControl.h>
 #include <cstring>
 #include <moveio/PinMapper.h>
 #include <trctrl/BackendFactory.h>
@@ -34,7 +34,7 @@ typedef struct transceiver_factory_config {
     TRANSCEIVER_TYPE type;
     std::vector<Transceiver::FireTcpPair> mappings;
     Transceiver::SPIDescriptor descriptor;
-    SimpleTransceiverControl* control;
+    Transceiver::SimpleControl* control;
 }TRANSCEIVER_CONFIG;
 
 class S3TP: public ClientInterface,
@@ -68,8 +68,8 @@ private:
     void assemblyRoutine();
     static void * staticAssemblyRoutine(void * args);
 
-    // SimpleTransceiverControl
-    SimpleTransceiverControl* control = nullptr;
+    // SimpleControl
+    Transceiver::SimpleControl* control = nullptr;
 
     //Clients
     std::map<uint8_t, Client*> clients;
