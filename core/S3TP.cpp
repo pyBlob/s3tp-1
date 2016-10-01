@@ -45,7 +45,8 @@ int S3TP::init(TRANSCEIVER_CONFIG * config) {
     active = true;
 
     if (config->type == SPI) {
-        transceiver = Transceiver::BackendFactory::fromSPI(config->descriptor, rx);
+        control = config->control;
+        transceiver = Transceiver::BackendFactory::fromSPI(config->descriptor, rx, *config->control);
     } else if (config->type == FIRE) {
         transceiver = Transceiver::BackendFactory::fromFireTcp(config->mappings, rx);
     }
@@ -58,6 +59,7 @@ int S3TP::init(TRANSCEIVER_CONFIG * config) {
     pthread_mutex_lock(&s3tp_mutex);
     rx.startModule();
     tx.startRoutine(rx.link);
+    control->startModule(rx.link);
 
     int id = pthread_create(&assembly_thread, NULL, &staticAssemblyRoutine, this);
     LOG_DEBUG(std::string("Assembly Thread (id " + std::to_string(id) + "): START"));
@@ -75,6 +77,7 @@ int S3TP::stop() {
     //Stop modules connected to Link Layer
     tx.stopRoutine();
     rx.stopModule();
+    control->stopModule();
     pthread_mutex_unlock(&s3tp_mutex);
 
     //Wait for assembly thread to finish
